@@ -1,0 +1,11 @@
+<div class="m-auto border border-1 border-success p-2 mb-4 w-100">
+  <div class='d-flex align-items-center justify-content-between p-3 todo-list' *ngFor="let todo of toDoList$ | async">
+    <p class='fs-5' [ngClass]="{'text-decoration-line-through': todo.isDone}">{{todo.text}}</p>
+    
+    <div class="d-flex align-items-center justify-content-center gap-3">
+      <input class='form-check-input' type='checkbox' [checked]="todo.isDone">
+      <button class='btn btn-info ml-2' (click)="editItem(todo)">Edit text</button>
+      <button class='btn btn-danger ml-2' (click)="deleteItem(todo.id)">X</button>
+    </div>
+  </div>
+</div>

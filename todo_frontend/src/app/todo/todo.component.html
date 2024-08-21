@@ -1,0 +1,8 @@
+<div class="container">
+    <h1 class="fs-1 text-center">ToDo</h1>
+    <div class="d-flex gap-3 flex-wrap">
+        <app-todo-add></app-todo-add>
+        <app-edit-todo [showModal]="showModal" (closeModal)="handleCloseModal()"></app-edit-todo>
+        <app-todo-list [showModal]="showModal" (openModel)="handleOpenModal()"></app-todo-list>
+    </div>
+</div>

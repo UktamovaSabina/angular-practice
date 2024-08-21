@@ -1,0 +1,37 @@
+<div class='m-2'>
+
+  <b>Задача 02</b> <br />
+  Разобьем ее на несколько частей, будешь сдавать ее частями. <br /><br />
+  <strong>Часть первая</strong><br />
+  Добавить по клику на кнопку "add random number" случайное число от 1 до 100 в коллекцию внизу, там где сейчас 30, 3,
+  6. По клику число должно
+  добавляться в конец списка<br /><br />
+
+  <strong>Часть вторая</strong><br />
+  Вывести справа статистику по введенным числам:<br />
+  <ul>
+    <li>Количество введенных чисел</li>
+    <li>минимальное значение из всех чисел</li>
+    <li>максимальное значение из всех чисел</li>
+    <li>среднее значение из всех чисел</li>
+  </ul>
+
+  <button (click)="onClick()" class='btn btn-primary'>Add random number</button>
+</div>
+
+<div class='m-2 row'>
+  <div class='col col-3'>
+    <div>Numbers in collection: </div>
+    <ul>
+      <li *ngFor="let n of numbers$ | async">{{n}}</li>
+    </ul>
+  </div>
+
+  <div class='col col-3' style='color: black'>
+    <div>Statistics: (вторая часть задачи)</div>
+    <div>Count: {{ numbersCount$ | async }}</div>
+    <div>Min: {{ minNum$ | async }}</div>
+    <div>Max: {{ maxNum$ | async }} </div>
+    <div>Average: {{ avgNum$ | async }}</div>
+  </div>
+</div>
