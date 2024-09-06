@@ -14,33 +14,34 @@ export class TodoListComponent implements OnInit {
   @Input() showModal!: boolean;
   @Output() openModel = new EventEmitter<void>();
 
-  public toDoList$: Observable<ITodo[]> = this.todoService.getTodos$$;
+  public toDoList$: Observable<ITodo[]> = this.service.getStoreTodo();
 
-  constructor(private todoService: TodoService, private fb: FormBuilder) {
+  constructor(private service: TodoService, private fb: FormBuilder) {
   }
 
   checkForm = this.fb.control({})
 
   ngOnInit(): void {
-    this.todoService.fetchAllTodos();
+    this.service.fetchAllTodos().subscribe({
+      next: () => {
+        console.log('success');
+      }
+    });
   }
 
   deleteItem(id: string) {
-    this.todoService.deleteTodo(id).subscribe({
+    this.service.deleteTodo(id).subscribe({
       next: () => {
-        this.todoService.fetchAllTodos()
-      },
-      error: (err) => {
-        console.log(err);
+        console.log('deleted');
       }
     })
   }
 
   editItem(todo: ITodo) {
+    this.service.updateEditStore$(todo)
     this.openModel.emit();
-    this.todoService.pushEditTodoStore(todo);
   }
-
+  
   editCheckTodo() {
     console.log('check input');
   }

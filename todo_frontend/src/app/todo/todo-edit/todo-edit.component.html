@@ -8,10 +8,11 @@
 
       <h3 class="fs-3 mb-4">Todo Details <span class="fs-3 text-danger">id:</span></h3>
 
-      <form (ngSubmit)="onEditSubmit()"  [formGroup]="editTodoForm">
-        <div class="d-flex gap-1 align-items-center justify-center mb-4">
+      <form (ngSubmit)="onEditSubmit()" [formGroup]="editTodoForm">
+        <div class="d-flex gap-2 align-items-center justify-center mb-4">
           <label for="hero-name" class="fs-4 w-25">Todo text: </label>
-          <input id="hero-name" placeholder="text...." class="form-control"  formControlName="text">
+          <input id="hero-name" placeholder="text...." class="form-control" formControlName="text">
+          <input type="checkbox" formControlName="isDone" [checked]="false" class="form-check-input">
         </div>
 
         <button class="btn btn-success save-btn" type="submit" [disabled]="editTodoForm.invalid">Save</button>

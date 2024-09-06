@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { TodoService } from '../todo.service';
 
@@ -11,8 +11,7 @@ import { TodoService } from '../todo.service';
 
 export class TodoAddComponent {
 
-  constructor(private fb: FormBuilder, private todoService: TodoService, private cdr: ChangeDetectorRef) {
-  }
+  constructor(private fb: FormBuilder, private todoService: TodoService) { }
 
   todoForm = this.fb.group({
     text: ['', [Validators.required, Validators.minLength(3)]],
@@ -21,14 +20,12 @@ export class TodoAddComponent {
 
   onSubmit() {
     if (this.todoForm.valid) {
-      this.todoService.addTodo({ text: this.todoForm?.value.text, isDone: this.todoForm.value.isDone }).subscribe({
+      this.todoService.addTodo(this.todoForm.value).subscribe({
         next: () => {
-          this.todoService.fetchAllTodos();
           this.todoForm.reset({
             text: '',
             isDone: false
           });
-          this.cdr.markForCheck();
         }
       })
     }

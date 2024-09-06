@@ -40,4 +40,4 @@ import { TodoEditComponent } from './todo/todo-edit/todo-edit.component';
   providers: [],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

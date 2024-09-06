@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { TodoService } from '../todo.service';
+import { Observable } from 'rxjs';
+import { ITodo, TodoService } from '../todo.service';
 
 @Component({
   selector: 'app-edit-todo',
@@ -13,6 +14,9 @@ export class TodoEditComponent implements OnChanges {
   @Input() showModal!: boolean;
   @Output() closeModal = new EventEmitter<void>();
 
+  public editStore$: Observable<Partial<ITodo>> = this.service.getEditStoreTodo();
+  public editTodoId: string = '';
+
   constructor(private service: TodoService, private fb: FormBuilder) {
   }
 
@@ -22,9 +26,14 @@ export class TodoEditComponent implements OnChanges {
   });
 
   ngOnChanges(): void {
-    this.editTodoForm.reset({
-      text: this.service.getEditTodo().text,
-      isDone: this.service.getEditTodo().isDone
+    this.editStore$.subscribe({
+      next: (todo) => {
+        this.editTodoForm.patchValue({
+          text: todo.text,
+          isDone: todo.isDone
+        });
+        if (todo.id) this.editTodoId = todo.id
+      }
     })
   }
 
@@ -33,11 +42,19 @@ export class TodoEditComponent implements OnChanges {
   }
 
   onEditSubmit() {
-    this.service.editTodo({ ...this.service.getEditTodo(), text: this.editTodoForm.value.text }).subscribe({
-      next: () => {
-        this.service.fetchAllTodos()
+    if (this.editTodoForm.valid) {
+      const todoEditForm = {
+        id: this.editTodoId,
+        text: this.editTodoForm.value.text,
+        isDone: this.editTodoForm.value.isDone
       }
-    });
+      this.service.editTodo(todoEditForm).subscribe({
+        next: () => {
+          console.log('edited');
+        }
+      })
+    }
+
     this.close();
   }
 }

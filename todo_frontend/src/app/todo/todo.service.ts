@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable, switchMap, tap } from 'rxjs';
 
 export interface ITodo {
   id: string,
@@ -13,52 +13,54 @@ export interface ITodo {
 export class TodoService {
 
   private storeTodos$ = new BehaviorSubject<ITodo[]>([]);
-  private storeEditTodo$ = new BehaviorSubject<Partial<ITodo>>({
-    id: '',
-    text: '',
-    isDone: false
-  });
+  private storeEditTodo$ = new BehaviorSubject<Partial<ITodo>>({});
 
   private readonly todoUrl = 'http://localhost:3000/';
 
   constructor(private http: HttpClient) {
   }
 
-  public fetchAllTodos = () => {
-    this.http.get<ITodo[]>(this.todoUrl + "todos").subscribe({
-      next: data => {
-        this._updateStrore$(data)
-      }
-    })
+  fetchAllTodos(): Observable<void> {
+    return this.http.get<ITodo[]>(this.todoUrl + "todos").pipe(
+      tap((todos) => this._updateStore$(todos)),
+      map(() => void 0));
   }
 
-  public getTodos$$: Observable<ITodo[]> = this.storeTodos$.pipe(
-    map((store) => {
-      return store
-    })
-  )
+  deleteTodo(id: string) {
+    return this.http.delete(this.todoUrl + "delete/" + id).pipe(
+      switchMap(() => this.fetchAllTodos()),
+    )
+  }
 
-  private _updateStrore$(todos: ITodo[]) {
+  addTodo(body: Partial<ITodo>) {
+    return this.http.post(this.todoUrl + "add/", body).pipe(
+      switchMap(() => this.fetchAllTodos()),
+    )
+  }
+
+  editTodo = (body: Partial<ITodo>) => {
+    return this.http.put(this.todoUrl + "update", body).pipe(
+      switchMap(() => this.fetchAllTodos())
+    )
+  }
+
+  getStoreTodo() {
+    return this.storeTodos$.pipe(map((store) => {
+      return store
+    }))
+  }
+
+  getEditStoreTodo() {
+    return this.storeEditTodo$.pipe(map((store) => {
+      return store
+    }))
+  }
+
+  private _updateStore$(todos: ITodo[]) {
     this.storeTodos$.next(todos)
   }
 
-  public deleteTodo = (id: string) => {
-    return this.http.delete(this.todoUrl + "delete/" + id)
-  }
-
-  public addTodo = (todo: Partial<ITodo>) => {
-    return this.http.post(this.todoUrl + "add", todo)
-  }
-
-  public editTodo = (todo: Partial<ITodo>) => {
-    return this.http.put(this.todoUrl + "update", todo)
-  }
-
-  public pushEditTodoStore(todo: ITodo) {
-    this.storeEditTodo$.next(todo);
-  }
-
-  public getEditTodo() {
-    return this.storeEditTodo$.getValue();
+  public updateEditStore$(todo: ITodo) {
+    this.storeEditTodo$.next(todo)
   }
 }
